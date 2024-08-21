@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>EliteAddy Inc Scheduling Form</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
+  </head>
+  <body>
+    <main class="container" style="padding-top: 5rem; max-width: 780px">
+      <h1>EliteAddy Inc Scheduling Form</h1>
+      <form method="post">
+        <input
+          type="text"
+          name="name"
+          required
+          placeholder="Full Name"
+          aria-label="Full Name"
+        />
+        <input
+          type="datetime-local"
+          name="datetime"
+          required
+          aria-label="Datetime local"
+        />
+        <input
+          type="email"
+          name="email"
+          required
+          placeholder="Email"
+          aria-label="Email"
+        />
+        <textarea
+          name="description"
+          required
+          placeholder="Write a short info about your requested service..."
+          aria-label="Professional short Infor about your requested service"
+        ></textarea>
+        <input type="submit" value="Submit" />
+      </form>
+      <div id="formodal"></div>
+    </main>
+    <script>
+      document.querySelector("form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+        const url = location.href;
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        const result = await response.json();
+        const forModal = document.getElementById("formodal");
+        console.log(result);
+        forModal.innerHTML = `
+          <dialog id="success" open>
+        <article>
+          <header>
+            <p>
+              <strong>🗓️ Thank You for Contacting Us!</strong>
+            </p>
+          </header>
+          <p>
+            We're excited to have you. We will get back to you as soon as possible.
+            Please close this page to continue.
+          </p>
+          <p>
+            <strong>You picked:</strong>
+        </p>
+          <ul>
+            <li>Date: ${new Date(result?.data?.datetime).toDateString()}</li>
+            <li>Time: ${new Date(
+              result?.data?.datetime
+            ).toLocaleTimeString()}</li>
+          </ul>
+        </article>
+      </dialog>
+        `;
+      });
+    </script>
+  </body>
+</html>
